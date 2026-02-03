@@ -1,0 +1,65 @@
+backend: edge                     # edge | piper | pyttsx3
+rate: 180
+volume: 0.7
+voice_ro_hint: "ro"
+voice_en_hint: "en"
+min_chunk_chars: 45           # bucăți mai mici -> start TTS mai rapid
+prebuffer_chars: 80           # cât așteaptă înainte de primul chunk
+soft_max_chars: 120           # forțează flush dacă propoziția e prea lungă
+max_idle_ms: 180              # flush dacă LLM tace pentru atât (ms)
+backchannel:
+  enabled: true
+  delay_ms: 2000
+  phrase_en: "One moment..."
+  phrase_ro: "Un moment..."
+
+# ─────────────────────────────────────────────────────────────
+# Client-Server Mode (pentru împărțirea pe 2 laptopuri)
+# ─────────────────────────────────────────────────────────────
+mode: remote                # local | remote
+# Când mode: remote, TTS rulează pe server și clientul primește audio prin HTTP
+remote_host: "localhost"      # IP-ul serverului (localhost pentru test)
+remote_port: 8001             # Portul serverului
+remote_timeout: 30.0          # Timeout în secunde
+
+# Edge TTS settings (Microsoft Neural Voices)
+edge_voice_en: "en-GB-RyanNeural"    # Ryan - voce britanică masculină
+edge_voice_ro: "ro-RO-EmilNeural"     # Emil - voce românească
+edge_rate: "+0%"                       # viteza vocii (-50% la +100%)
+edge_pitch: "+0Hz"                     # pitch-ul vocii
+
+piper:
+  exe: "venv/bin/piper"     # verifică cu: which piper
+  model_ro: "voices/ro_RO-mihai-medium.onnx"
+  config_ro: "voices/ro_RO-mihai-medium.onnx.json"
+  model_en: "voices/en_US-amy-medium.onnx" 
+  config_en: "voices/en_US-amy-medium.onnx.json"
+  speaker_id: null
+  length_scale: 1.0
+  noise_scale: 0.667
+  noise_w: 0.8
+  sentence_silence_ms: 80
+  warmup_enabled: true
+  warmup_text: "Hello! Testing audio pipeline."
+  warmup_lang: "en"
+
+# Pre-cache: fraze comune pre-generate la boot
+cache_phrases:
+  ack_en:
+    text: "Yes, I'm listening."
+    lang: "en"
+  ack_ro:
+    text: "Da, te ascult."
+    lang: "ro"
+  filler_en:
+    text: "One moment..."
+    lang: "en"
+  filler_ro:
+    text: "Un moment..."
+    lang: "ro"
+  goodbye_en:
+    text: "Goodbye! Have a great day!"
+    lang: "en"
+  goodbye_ro:
+    text: "La revedere! O zi bună!"
+    lang: "ro"
